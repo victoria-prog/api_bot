@@ -16,7 +16,6 @@ CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
 
 logging.basicConfig(
     level=logging.DEBUG,
-    filename='program.log',
     format='%(asctime)s, %(levelname)s, %(message)s, %(name)s'
 )
 
@@ -38,8 +37,10 @@ def parse_homework_status(homework):
     if homework['status'] == 'rejected':
         verdict = 'К сожалению в работе нашлись ошибки.'
     else:
-        verdict = 'Ревьюеру всё понравилось,'
-        'можно приступать к следующему уроку.'
+        verdict = (
+            'Ревьюеру всё понравилось, '
+            'можно приступать к следующему уроку.'
+        )
     return f'У вас проверили работу "{homework_name}"!\n\n{verdict}'
 
 
@@ -63,7 +64,6 @@ def main():
     current_timestamp = int(time.time())
     while True:
         try:
-            5/0
             new_homework = get_homework_statuses(current_timestamp)
             if new_homework.get('homeworks'):
                 send_message(
