@@ -61,7 +61,8 @@ def send_message(message, bot_client):
 def main():
     bot = Bot(token=TELEGRAM_TOKEN)
     logger.debug('Запуск бота')
-    current_timestamp = int(time.time())
+    # current_timestamp = int(time.time())
+    current_timestamp = 0
     while True:
         try:
             new_homework = get_homework_statuses(current_timestamp)
@@ -71,9 +72,9 @@ def main():
                         new_homework.get('homeworks')[0]
                     ), bot
                 )
-            current_timestamp = new_homework.get(
-                'current_date', current_timestamp
-            )
+            # current_timestamp = new_homework.get(
+            #     'current_date', current_timestamp
+            # )
             time.sleep(1200)
         except Exception as e:
             msg = f'Бот столкнулся с ошибкой: {e}'
