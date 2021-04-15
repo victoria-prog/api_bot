@@ -77,7 +77,6 @@ def main():
             time.sleep(1200)
         except Exception as e:
             msg = f'Бот столкнулся с ошибкой: {e}'
-            print(msg)
             logger.exception(msg)
             send_message(msg, bot)
             time.sleep(5)
