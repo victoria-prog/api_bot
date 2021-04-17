@@ -25,22 +25,21 @@ logging.basicConfig(
 
 
 def parse_homework_status(homework):
+    verdict = {
+        'rejected': 'К сожалению в работе нашлись ошибки.',
+        'approved': 'Ревьюеру всё понравилось, можно приступать '
+        'к следующему уроку.',
+        'reviewing': 'Работа взята в ревью.'
+    }
     homework_name = homework.get('homework_name')
-    if homework_name is not None:
-        status = homework.get('status')
-        if status == 'rejected':
-            verdict = 'К сожалению в работе нашлись ошибки.'
-        elif status == 'reviewing':
-            verdict = 'Работа взята в ревью.'
-        elif status == 'approved':
-            verdict = (
-                'Ревьюеру всё понравилось, '
-                'можно приступать к следующему уроку.'
-            )
-        else:
-            verdict = 'Статус не определен'
-        return f'У вас проверили работу "{homework_name}"!\n\n{verdict}'
-    return 'Неверный ответ сервера'
+    homework_status = homework.get('status')
+    if (homework_status is None) or (homework_name is None):
+        error_msg = 'Неверный ответ сервера'
+        logging.error(error_msg)
+        return error_msg
+    else:
+        verdict_msg = verdict[homework_status]
+    return f'У вас проверили работу "{homework_name}"!\n\n{verdict_msg}'
 
 
 def get_homework_statuses(current_timestamp):
