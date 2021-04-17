@@ -43,13 +43,21 @@ def parse_homework_status(homework):
 
 
 def get_homework_statuses(current_timestamp):
+    if current_timestamp is None:
+        current_timestamp = int(time.time())
     address = 'https://praktikum.yandex.ru/api/user_api/homework_statuses/'
     headers = {'Authorization': f'OAuth {PRAKTIKUM_TOKEN}'}
     params = {'from_date': current_timestamp}
-    homework_statuses = requests.get(address, headers=headers, params=params)
-    if isinstance(homework_statuses, requests.models.Response):
-        homework_statuses.raise_for_status()
-    return homework_statuses.json()
+    try:
+        homework_statuses = requests.get(
+            address, headers=headers, params=params
+        )
+        return homework_statuses.json()
+    except requests.exceptions.ConnectionError as con_error:
+        logging.exception(con_error)
+    except requests.exceptions.RequestException as rest_errors:
+        logging.exception(rest_errors)
+    return {}
 
 
 def send_message(message, bot_client):
@@ -71,31 +79,16 @@ def main():
                         new_homework.get('homeworks')[0]
                     ), bot
                 )
+            else:
+                send_message('Ошибка запроса', bot)
             current_timestamp = new_homework.get(
                 'current_date', current_timestamp
             )
-            if current_timestamp is None:
-                current_timestamp = int(time.time())
             time.sleep(1200)
-            continue
-        except requests.exceptions.ConnectionError as con_error:
-            logging.exception(con_error)
-            msg = 'Соединение не установлено'
-        except requests.exceptions.HTTPError as http_error:
-            logging.exception(http_error)
-            msg = f'Ошибка запроса. Код: {http_error.response.status_code}'
-        except requests.exceptions.Timeout as time_error:
-            logging.exception(time_error)
-            msg = 'Время ожидания ответа от сервера истекло'
-        except requests.exceptions.RequestException as rest_error:
-            logging.exception(rest_error)
-            msg = 'Ошибка запроса'
         except Exception as e:
             msg = f'Бот столкнулся с ошибкой: {e}'
             logging.exception(msg)
-        finally:
-            if msg != 'Соединение не установлено':
-                send_message(msg, bot)
+            send_message(msg, bot)
             time.sleep(600)
 
 
