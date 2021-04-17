@@ -38,8 +38,8 @@ def parse_homework_status(homework):
         logging.error(error_msg)
         return error_msg
     else:
-        verdict_msg = verdict[homework_status]
-    return f'У вас проверили работу "{homework_name}"!\n\n{verdict_msg}'
+        verdict_msg = verdict.get(homework_status)
+        return f'У вас проверили работу "{homework_name}"!\n\n{verdict_msg}'
 
 
 def get_homework_statuses(current_timestamp):
