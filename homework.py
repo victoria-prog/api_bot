@@ -57,6 +57,8 @@ def get_homework_statuses(current_timestamp):
         logging.exception(con_error)
     except requests.exceptions.RequestException as rest_errors:
         logging.exception(rest_errors)
+    except ValueError as val_error:
+        logging.exception(val_error)
     return {}
 
 
