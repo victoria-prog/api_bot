@@ -54,11 +54,14 @@ def get_homework_statuses(current_timestamp):
         )
         return homework_statuses.json()
     except requests.exceptions.ConnectionError as con_error:
-        logging.exception(con_error)
+        msg = f'Ошибка соединения: {con_error}'
+        logging.exception(msg)
     except requests.exceptions.RequestException as rest_errors:
-        logging.exception(rest_errors)
+        msg = f'Ошибка запроса: {rest_errors}'
+        logging.exception(msg)
     except ValueError as val_error:
-        logging.exception(val_error)
+        msg = f'Ошибка парсинга: {val_error}'
+        logging.exception(msg)
     return {}
 
 
@@ -71,7 +74,7 @@ def send_message(message, bot_client):
 def main():
     bot = Bot(token=TELEGRAM_TOKEN)
     logging.debug('Запуск бота')
-    current_timestamp = int(time.time())
+    current_timestamp = 0
     while True:
         try:
             new_homework = get_homework_statuses(current_timestamp)
@@ -81,8 +84,6 @@ def main():
                         new_homework.get('homeworks')[0]
                     ), bot
                 )
-            else:
-                send_message('Ошибка запроса', bot)
             current_timestamp = new_homework.get(
                 'current_date', current_timestamp
             )
