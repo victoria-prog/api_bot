@@ -33,18 +33,17 @@ def parse_homework_status(homework):
     }
     homework_name = homework.get('homework_name')
     homework_status = homework.get('status')
-    if (homework_status is None) or (homework_name is None):
+    if homework_status is None or homework_name is None:
         error_msg = 'Неверный ответ сервера'
         logging.error(error_msg)
         return error_msg
     else:
-        verdict_msg = verdict.get(homework_status)
+        verdict_msg = verdict[homework_status]
         return f'У вас проверили работу "{homework_name}"!\n\n{verdict_msg}'
 
 
 def get_homework_statuses(current_timestamp):
-    if current_timestamp is None:
-        current_timestamp = int(time.time())
+    current_timestamp = current_timestamp or int(time.time())
     address = 'https://praktikum.yandex.ru/api/user_api/homework_statuses/'
     headers = {'Authorization': f'OAuth {PRAKTIKUM_TOKEN}'}
     params = {'from_date': current_timestamp}
@@ -53,16 +52,9 @@ def get_homework_statuses(current_timestamp):
             address, headers=headers, params=params
         )
         return homework_statuses.json()
-    except requests.exceptions.ConnectionError as con_error:
-        msg = f'Ошибка соединения: {con_error}'
-        logging.exception(msg)
-    except requests.exceptions.RequestException as rest_errors:
-        msg = f'Ошибка запроса: {rest_errors}'
-        logging.exception(msg)
-    except ValueError as val_error:
-        msg = f'Ошибка парсинга: {val_error}'
-        logging.exception(msg)
-    return {}
+    except Exception as error:
+        logging.exception(error)
+        return {}
 
 
 def send_message(message, bot_client):
