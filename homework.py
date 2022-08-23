@@ -26,20 +26,19 @@ logging.basicConfig(
 
 def parse_homework_status(homework):
     verdict = {
-        'rejected': 'К сожалению в работе нашлись ошибки.',
-        'approved': 'Ревьюеру всё понравилось, можно приступать '
-        'к следующему уроку.',
-        'reviewing': 'Работа взята в ревью.'
+        'rejected': 'Unfortunately, there are mistakes in your work.',
+        'approved': 'Everything is great, you can proceed to the next task',
+        'reviewing': 'Your work has been processing.'
     }
     homework_name = homework.get('homework_name')
     homework_status = homework.get('status')
     if homework_status is None or homework_name is None:
-        error_msg = 'Неверный ответ сервера'
+        error_msg = 'Error from the server'
         logging.error(error_msg)
         return error_msg
     else:
         verdict_msg = verdict[homework_status]
-        return f'У вас проверили работу "{homework_name}"!\n\n{verdict_msg}'
+        return f'Your work has been reviewed "{homework_name}"!\n\n{verdict_msg}'
 
 
 def get_homework_statuses(current_timestamp):
@@ -59,13 +58,13 @@ def get_homework_statuses(current_timestamp):
 
 def send_message(message, bot_client):
     msg = bot_client.send_message(CHAT_ID, message)
-    logging.info('Сообщение отправлено')
+    logging.info('The message has been sent')
     return msg
 
 
 def main():
     bot = Bot(token=TELEGRAM_TOKEN)
-    logging.debug('Запуск бота')
+    logging.debug('Invoke a bot...')
     current_timestamp = 0
     while True:
         try:
@@ -81,7 +80,7 @@ def main():
             )
             time.sleep(1200)
         except Exception as e:
-            msg = f'Бот столкнулся с ошибкой: {e}'
+            msg = f'The bot has encountered an error: {e}'
             logging.exception(msg)
             send_message(msg, bot)
             time.sleep(600)
